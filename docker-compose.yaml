@@ -3,7 +3,7 @@ services:
         container_name: mongo
         image: mongo:latest
         volumes:
-            - ./backend/data: /data
+            - ./backend/data:/data
         ports:
             - "27017:27017"
         
@@ -18,7 +18,7 @@ services:
             mongodb
     
     frontend:
-        container_name: frontkend
+        container_name: frontend
         build: ./frontend
         env_file:
             - ./frontend/.env.sample     
