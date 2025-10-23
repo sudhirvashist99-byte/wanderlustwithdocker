@@ -8,6 +8,6 @@ RUN npm i
 
 COPY .env.sample .env
 
-EXPOSE 5000
+EXPOSE 5431
 
 CMD ["npm","start"]
