@@ -3,19 +3,28 @@ services:
         container_name: mongo
         image: mongo:latest
         volumes:
-            - ./backend/data:/data
+            - ./backend/data:/data/db
         ports:
             - "27017:27017"
-        
+        environment:
+            MONGO_INITDB_DATABASE: wanderlust
+    
+    redis:
+        container_name: redis
+        image: redis:latest
+        ports:
+          - "6379:6379"
+      
     backend:
         container_name: backend
         build: ./backend
         env_file:
             - ./backend/.env.sample     
         ports:
-            - "5000:5000"
+            - "8080:8080"
         depends_on:
             - mongodb
+            - redis
     
     frontend:
         container_name: frontend
@@ -25,7 +34,7 @@ services:
         ports:
             - "5173:5173"
         depends_on:
-            - mongodb
+            - backend
 volumes:
     data:             
             

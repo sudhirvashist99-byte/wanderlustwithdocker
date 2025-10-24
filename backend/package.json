@@ -40,7 +40,7 @@
   "scripts": {
     "test": "jest --watchAll  --detectOpenHandles --verbose --coverage ",
     "build": "tsc",
-    "start": "npm run build && node dist/server.js",
+    "start": "node dist/server.js",
     "dev": "nodemon --exec \"npx tsx\" server.ts",
     "check": "prettier --check .",
     "format": "prettier --write .",
