@@ -1,0 +1,18 @@
+exit
+db.posts.find().count()
+use wanderlust
+show dbs
+exit
+docker exec -it mongo mongosh
+docker exec -it mongo bash
+db.sample_posts.find().pretty()
+show posts
+show collections
+use wanderlust
+exit
+docker logs backend
+db.posts.find().pretty()
+db.users.find().pretty()
+show collections
+use wanderlust
+show dbs

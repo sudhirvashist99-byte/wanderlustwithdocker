@@ -1,44 +1,39 @@
-# ==============================
-# 1️⃣ Build stage
-# ==============================
-FROM node:20 AS build
-
+# ---------- Stage 1: Build ----------
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy only package files first for caching
+# Copy package files first (for caching)
 COPY package*.json ./
 
-# Install ALL dependencies (including dev)
+# Install all dependencies including devDeps for build
 RUN npm install --ignore-scripts
 
-# Copy the rest of the backend source
+# Copy source files
 COPY . .
 
-# Build TypeScript -> dist/
+# Build TypeScript to JavaScript
 RUN npm run build
 
-# ==============================
-# 2️⃣ Production stage
-# ==============================
-FROM node:20-slim AS production
 
+# ---------- Stage 2: Runtime ----------
+FROM node:18-alpine AS runtime
 WORKDIR /app
 
-# Copy only package files again
+# Copy only production dependencies
 COPY package*.json ./
-
 # Install only production dependencies
-RUN npm install --omit=dev --ignore-scripts
+RUN npm install --omit=dev --ignore-scripts && \
+    npm cache clean --force && \
+    rm -rf /tmp/* /root/.npm /usr/share/man /usr/share/doc
 
-# Copy compiled app and environment
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/.env.sample .env.sample
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY .env.sample ./.env.sample
 
 # Expose backend port
-EXPOSE 5000
+EXPOSE 8080
 
-# Set environment
-ENV NODE_ENV=production
-
-# Start backend
-CMD ["npm", "start"]
+# Run the backend
+#CMD ["npm", "start"]
+# Run directly with Node
+CMD ["node", "dist/server.js"]

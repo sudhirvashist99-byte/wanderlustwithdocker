@@ -1,0 +1,20 @@
+# frontend/Dockerfile.dev
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Disable prepare script safely (for all npm versions)
+RUN npm pkg delete scripts.prepare || true \
+    && npm install
+
+# Copy rest of frontend source
+COPY . .
+
+# Expose port for frontend dev server (adjust if needed)
+EXPOSE 5173
+
+# Run development server
+CMD ["npm", "run", "dev"]

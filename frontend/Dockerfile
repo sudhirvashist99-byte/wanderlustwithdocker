@@ -1,44 +1,33 @@
-# ==============================
-# 1️⃣ Build stage
-# ==============================
-FROM node:20 AS build
-
+# ---------- Stage 1: Build ----------
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy only package files
+# Copy dependency files
 COPY package*.json ./
+RUN npm install --ignore-scripts
 
-# Install all dependencies (dev included for build)
-RUN npm ci
-
-# Copy rest of the frontend source
+# Copy app source
 COPY . .
 
-# Copy environment variables (if any)
-COPY .env.sample .env
-
-# Build production static files
+# pass build-time variable (optional)
+ARG VITE_API_PATH
+ENV VITE_API_PATH=${VITE_API_PATH}
+# Build optimized production files
 RUN npm run build
 
-# ==============================
-# 2️⃣ Production stage
-# ==============================
-FROM node:20-slim AS production
 
-WORKDIR /app
+# ---------- Stage 2: Nginx Serve ----------
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
 
-# Install only production dependencies (needed if your preview uses node)
-COPY package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+# Remove default nginx static files
+RUN rm -rf ./*
 
-# Copy build output
-COPY --from=build /app/dist ./dist
+# Copy build output from builder
+COPY --from=builder /app/dist .
 
-# Copy environment if needed (optional)
-COPY --from=build /app/.env .env
+# Copy custom nginx config if needed
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port for preview
-EXPOSE 5173
-
-# Start frontend in preview mode (production)
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
