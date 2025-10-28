@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build artifacts
+dist
+coverage
+build
+
+# Local environment and secrets
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Git and editor files
+.git
+.gitignore
+.vscode
+.idea
+*.swp
+.DS_Store
+
+# Docker files not needed in image
+docker-compose.yml
+README.md
+*.md

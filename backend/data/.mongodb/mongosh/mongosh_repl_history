@@ -1,18 +1,16 @@
 exit
-db.posts.find().count()
+db.posts.find();
+show collections
+show collectios
 use wanderlust
 show dbs
 exit
-docker exec -it mongo mongosh
-docker exec -it mongo bash
-db.sample_posts.find().pretty()
-show posts
-show collections
-use wanderlust
+show dbs
 exit
-docker logs backend
-db.posts.find().pretty()
-db.users.find().pretty()
+mongoimport --db wanderlust --collection posts --file /docker-entrypoint-initdb.d/posts.json --jsonArray
+use wanderlust
+show dbs
+exit
 show collections
 use wanderlust
 show dbs
